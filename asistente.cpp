@@ -85,7 +85,7 @@ int MenuPrincipalAsistente()
 	gotoxy(45,5);
 	printf("2.- Registrar Mascota");
 	gotoxy(45,6);
-	printf("3.- Listar Mascotas");
+	printf("3.- Registrar Turno");
 	gotoxy(45,7);
 	printf("4.- Listado de Atenciones por Veterinario y Fecha");
 	gotoxy(45,9);
