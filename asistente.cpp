@@ -4,82 +4,144 @@
 #include<windows.h>
 #include"funciones.h"
 
-//**********************************FUNCIONES***********************************
+struct Fecha
+{
+	int dia;
+	int mes;
+	int anio;
+};
+struct Mascota
+{
+	char ApellidoyNombre[60];
+	char Domicilio[60];
+	int DNI_Dueno;
+	char Localidad[60];
+	Fecha FechadeNacimiento;
+	float Peso;
+	char Telefono[25];
+};
 
 int MenuPrincipalAsistente();
-
-//******************************************************************************
-
+void registrarMascotas(FILE *Mascotas);
+void mensaje(char const *cadena);
 
 main()
 {
 	setlocale(LC_CTYPE,"spanish");
 	system("color 2");
 	
-	int bandera=1;
-	char Opcion;
+	FILE *ArchMascotas; //Se abre de lectura para conservar
+	ArchMascotas = fopen("Mascotas.dat","w+b"); //los anteriores registros.
+	
+	if(ArchMascotas == NULL) // Evalua, Si hubo error, muestra mensaje y termina.
+	{
+		system("CLS");
+		printf("Ocurrio un error en la apertura del Archivo....");
+		exit(1);
+	}
+	
+	int Opcion = MenuPrincipalAsistente(); //Llama la funci√≥n que muestra el men√∫.
 	
 	do
 	{
-		Opcion=MenuPrincipalAsistente();
 		switch(Opcion)
 		{
-			case'a':case'A':
+			case 1:
+				
 				break;
-			case'b':case'B':
-				break;
-			case'c':case'C':
-				break;
-			case'd':case'D':
-				break;
-			case'e':case'E':
-				bandera=0;
+			case 2:
+				registrarMascotas(ArchMascotas);
 				LimpiarPantalla();
-				gotoxy(35,2);
-				printf("__________________");
-				gotoxy(35,3);
-				printf("*FIN DEL PROGRAMA*");
-				gotoxy(35,4);
-				printf("==================");
+				Opcion = MenuPrincipalAsistente();
+				break;
+			case 3:
+				
+				break;
+			case 4:
+				
+				break;
+			case 5:
+				system("CLS");
+				printf("Fin del Programa");
 				break;
 			default:
-				gotoxy(25,14);
-				printf("================================================"); 
-				gotoxy(25,15);
-				printf("ERROR!!");
-				gotoxy(25,16);
-				printf("NO SE INGRES” UN OPCI”N V¡LIDA");
-				break;
+				system("CLS");
+				printf("Ha ingresado una opcion no valida");
+				LimpiarPantalla();
+				Opcion = MenuPrincipalAsistente();
 		}
-		
-		LimpiarPantalla();
-		
-	}while(bandera==1);
+	}while(Opcion != 5);
 }
-
 int MenuPrincipalAsistente()
 {
-	char OP;
+	int Opcion;
 	
-	gotoxy(25,1);
-	printf("================================================"); 
-	gotoxy(43,2);
-	printf("MEN⁄ ASISTENTE");
-	gotoxy(25,3);
-	printf("================================================"); 
-	gotoxy(25,4);
-	printf("a._Iniciar SesiÛn");
-	gotoxy(25,5);
-	printf("b._Registrar mascota");
-	gotoxy(25,6);
-	printf("c._Registrar Turno");
-	gotoxy(25,7);
-	printf("d._Listado de Atenciones por Veterinario y Fecha");
-	gotoxy(25,9);
-	printf("e._Cerrar AplicaciÛn");
-	gotoxy(25,11);
-	printf("Ingrese una opciÛn:");
+	gotoxy(45,2);
+	printf("Modulo del Asistente");
+	gotoxy(45,3);
+	printf("========================="); 
+	gotoxy(45,4);
+	printf("1.- Iniciar Sesi√≥n");
+	gotoxy(45,5);
+	printf("2.- Registrar Mascota");
+	gotoxy(45,6);
+	printf("3.- Listar Mascotas");
+	gotoxy(45,7);
+	printf("4.- Listado de Atenciones por Veterinario y Fecha");
+	gotoxy(45,9);
+	printf("5.- Cerrar la aplicaci√≥n");
+	gotoxy(45,11);
+	printf("Ingrese una opci√≥n: ");
 	_flushall();
-	scanf("%c",&OP);
-	return OP;
+	scanf("%d",&Opcion);
+	return Opcion;
+}
+void mensaje(char const *cadena)
+{
+	printf("\n %50s ", cadena);
+	system("PAUSE");
+} //Fin de la funci√≥n mensaje()
+void registrarMascotas(FILE *Mascotas)
+{
+	Mascota reg; //crea la variable "reg" de tipo Mascota.
+	int nroReg=0; //Variable contador del nro de registros almacenado.
+	char continua='N';
+
+	do
+	{
+		system("CLS");
+		printf("\t** Registro Nro %3.0d **\n", ++nroReg);
+		printf("\t****************************\n\n");
+		_flushall();
+		printf("\n\t Apellido y Nombre: ");
+		gets(reg.ApellidoyNombre);
+		strupr(reg.ApellidoyNombre);
+		printf("\n\t Domicilio: ");
+		gets(reg.Domicilio);
+		strupr(reg.Domicilio);
+		printf("\n\t DNI del Due√±o: ");
+		scanf("%d",&reg.DNI_Dueno);
+		_flushall();
+		printf("\n\t Localidad: ");
+		gets(reg.Localidad);
+		strupr(reg.Localidad);
+		printf("\n\t Fecha de Nacimiento: \n");
+		printf("\n\t Dia: ");
+		scanf("%d",&reg.FechadeNacimiento.dia);
+		printf("\n\t Mes: ");
+		scanf("%d",&reg.FechadeNacimiento.mes);
+		printf("\n\t Anio: ");
+		scanf("%d",&reg.FechadeNacimiento.anio);
+		printf("\n\t Peso: ");
+		scanf("%f",&reg.Peso);
+		_flushall();
+		printf("\n\t Telefono: ");
+		gets(reg.Telefono);
+		fwrite(&reg, sizeof(Mascota), 1, Mascotas); //Graba el registro l√≥gico.
+		_flushall();
+		printf("\n\nContinuar Registrando Mascotas (S/N): ");
+		scanf("%c", &continua);
+	}while(continua == 'S' || continua == 's');
+	system("CLS");
+	mensaje("Fin de la carga");
 }
